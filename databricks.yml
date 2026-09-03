@@ -1,0 +1,101 @@
+# ============================================================================
+# Declarative Automation Bundle (DAB) — Amazon Pipeline CI/CD
+# Pipeline as Code: Infrastructure and configuration managed programmatically
+# ============================================================================
+#
+# This bundle defines:
+#   1. A production job that runs the Amazon ETL pipeline notebook
+#   2. A test job that runs the unit test notebook
+#   3. CI/CD integration via GitHub Actions (see .github/workflows/ci.yml)
+#
+# Usage:
+#   databricks bundle deploy --target dev    # Deploy to dev environment
+#   databricks bundle deploy --target prod   # Deploy to production
+#   databricks bundle run     --target dev    # Run the pipeline in dev
+# ============================================================================
+
+bundle:
+  name: amazon_pipeline
+
+variables:
+  pipeline_notebook_path:
+    description: Path to the main ETL pipeline notebook
+    default: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
+  
+  test_notebook_path:
+    description: Path to the unit test notebook
+    default: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
+
+# ----------------------------------------------------------------------------
+# Shared job definition template
+# ----------------------------------------------------------------------------
+resources:
+  jobs:
+    amazon_etl_pipeline:
+      name: "Amazon ETL Pipeline - ${bundle.target}"
+      description: "Runs the Amazon medallion architecture ETL pipeline (Bronze → Silver → Gold)"
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"  # Daily at 6 AM UTC
+        timezone_id: UTC
+        pause_status: ${bundle.target == 'prod' ? 'UNPAUSED' : 'PAUSED'}
+      tasks:
+        - task_key: run_etl_pipeline
+          notebook_task:
+            notebook_path: ${var.pipeline_notebook_path}
+            source: WORKSPACE
+          job_cluster_key: pipeline_cluster
+      job_clusters:
+        - job_cluster_key: pipeline_cluster
+          new_cluster:
+            spark_version: latest
+            node_type_id: i3.xlarge
+            num_workers: 1
+            data_security_mode: SINGLE_USER
+            runtime_engine: PHOTON
+      tags:
+        project: amazon-pipeline
+        environment: ${bundle.target}
+        owner: data-engineering
+    
+    amazon_pipeline_tests:
+      name: "Amazon Pipeline Unit Tests - ${bundle.target}"
+      description: "Runs unit tests for transformation logic, validation rules, and data quality"
+      tasks:
+        - task_key: run_unit_tests
+          notebook_task:
+            notebook_path: ${var.test_notebook_path}
+            source: WORKSPACE
+          job_cluster_key: test_cluster
+      job_clusters:
+        - job_cluster_key: test_cluster
+          new_cluster:
+            spark_version: latest
+            node_type_id: i3.xlarge
+            num_workers: 1
+            data_security_mode: SINGLE_USER
+      tags:
+        project: amazon-pipeline
+        type: test
+        environment: ${bundle.target}
+
+# ----------------------------------------------------------------------------
+# Environment targets (dev / prod)
+# ----------------------------------------------------------------------------
+targets:
+  dev:
+    mode: development
+    default:
+      run_as:
+        user_email: 71762233042@cit.edu.in
+    variables:
+      pipeline_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
+      test_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
+  
+  prod:
+    mode: production
+    default:
+      run_as:
+        user_email: 71762233042@cit.edu.in
+    variables:
+      pipeline_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
+      test_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
