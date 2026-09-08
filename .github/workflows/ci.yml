@@ -86,7 +86,7 @@ jobs:
       - name: Run unit tests via Databricks job
         run: |
           # Trigger the test job and wait for completion
-          JOB_ID=$(databricks bundle deploy -t dev --output json | jq -r '.jobs["amazon_pipeline_tests"].job_id')
+          JOB_ID=$(databricks bundle deploy -t dev --output json | jq -r '.jobs["amazon_pipeline_tests_v2"].job_id')
           RUN_ID=$(databricks jobs run-now --job-id $JOB_ID --output json | jq -r '.run_id')
           echo "Test job run ID: $RUN_ID"
           

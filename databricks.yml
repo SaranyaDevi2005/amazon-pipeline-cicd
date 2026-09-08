@@ -35,7 +35,7 @@ variables:
 # ----------------------------------------------------------------------------
 resources:
   jobs:
-    amazon_etl_pipeline:
+    amazon_etl_pipeline_v2:
       name: "Amazon ETL Pipeline - ${bundle.target}"
       description: "Runs the Amazon medallion architecture ETL pipeline (Bronze → Silver → Gold)"
       schedule:
@@ -52,7 +52,7 @@ resources:
         environment: ${bundle.target}
         owner: data-engineering
     
-    amazon_pipeline_tests:
+    amazon_pipeline_tests_v2:
       name: "Amazon Pipeline Unit Tests - ${bundle.target}"
       description: "Runs unit tests for transformation logic, validation rules, and data quality"
       tasks:
