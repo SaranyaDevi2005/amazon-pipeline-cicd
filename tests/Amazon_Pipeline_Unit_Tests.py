@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 # DBTITLE 1,Unit Tests Title
 # MAGIC %md
 # MAGIC # Amazon Pipeline — Unit Tests
@@ -113,8 +117,6 @@ mock_schema = StructType([
     StructField("name", StringType(), True),
     StructField("main_category", StringType(), True),
     StructField("sub_category", StringType(), True),
-    StructField("image", StringType(), True),
-    StructField("link", StringType(), True),
     StructField("ratings", StringType(), True),
     StructField("no_of_ratings", StringType(), True),
     StructField("discount_price", StringType(), True),
