@@ -10,12 +10,12 @@ amazon-pipeline-cicd/
 ├── databricks.yml                     # Declarative Automation Bundle (DAB)
 ├── BRANCHING_STRATEGY.md              # Git branching strategy documentation
 ├── README.md                          # This file
+├── src/
+│   ├── README.md                      # Source code guide
+│   └── Amazon_Production_Pipeline.py   # Main ETL pipeline (Bronze → Silver → Gold)
 └── tests/
-    └── (unit tests run via notebook)
-
-Notebooks (in workspace root):
-├── Amazon_Production_Pipeline.ipynb   # Main ETL pipeline (Bronze → Silver → Gold)
-└── Amazon_Pipeline_Unit_Tests.ipynb   # Unit tests for transformation logic
+    ├── README.md                      # Test guide
+    └── Amazon_Pipeline_Unit_Tests.py   # Unit tests for transformation logic
 ```
 
 ## Quick Start

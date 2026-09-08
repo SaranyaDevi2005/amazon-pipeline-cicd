@@ -1,13 +1,13 @@
-# Source Notebooks
+# Source Code
 
-The pipeline notebooks are stored in the Databricks workspace and referenced by path in `databricks.yml`:
+The pipeline notebooks are version-controlled in this repo as source files:
 
-- **Pipeline**: `/Users/71762233042@cit.edu.in/Amazon_Production_Pipeline`
-- **Unit Tests**: `/Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests`
+- **Pipeline**: `src/Amazon_Production_Pipeline.py`
+- **Unit Tests**: `tests/Amazon_Pipeline_Unit_Tests.py`
 
-## How to sync notebook code to this repo
+## How to sync notebook changes from workspace to repo
 
-Use the Databricks CLI to export notebooks as source:
+If you edit the notebooks in the Databricks workspace UI, re-export to keep the repo in sync:
 
 ```bash
 databricks workspace export --format SOURCE \
@@ -17,4 +17,20 @@ databricks workspace export --format SOURCE \
 databricks workspace export --format SOURCE \
   /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests \
   tests/Amazon_Pipeline_Unit_Tests.py
+```
+
+## How to deploy
+
+```bash
+# Validate the bundle
+databricks bundle validate -t dev
+
+# Deploy to dev (uploads notebooks from repo to workspace)
+databricks bundle deploy -t dev
+
+# Run the pipeline
+databricks bundle run -t dev amazon_etl_pipeline
+
+# Run unit tests
+databricks bundle run -t dev amazon_pipeline_tests
 ```

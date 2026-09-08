@@ -19,12 +19,16 @@ bundle:
 
 variables:
   pipeline_notebook_path:
-    description: Path to the main ETL pipeline notebook
-    default: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
+    description: Path to the main ETL pipeline notebook (relative to bundle root)
+    default: src/Amazon_Production_Pipeline.py
   
   test_notebook_path:
-    description: Path to the unit test notebook
-    default: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
+    description: Path to the unit test notebook (relative to bundle root)
+    default: tests/Amazon_Pipeline_Unit_Tests.py
+  
+  job_pause_status:
+    description: Whether the scheduled job is paused (PAUSED for dev, UNPAUSED for prod)
+    default: PAUSED
 
 # ----------------------------------------------------------------------------
 # Shared job definition template
@@ -37,12 +41,11 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 6 * * ?"  # Daily at 6 AM UTC
         timezone_id: UTC
-        pause_status: ${bundle.target == 'prod' ? 'UNPAUSED' : 'PAUSED'}
+        pause_status: ${var.job_pause_status}
       tasks:
         - task_key: run_etl_pipeline
           notebook_task:
             notebook_path: ${var.pipeline_notebook_path}
-            source: WORKSPACE
           job_cluster_key: pipeline_cluster
       job_clusters:
         - job_cluster_key: pipeline_cluster
@@ -64,7 +67,6 @@ resources:
         - task_key: run_unit_tests
           notebook_task:
             notebook_path: ${var.test_notebook_path}
-            source: WORKSPACE
           job_cluster_key: test_cluster
       job_clusters:
         - job_cluster_key: test_cluster
@@ -84,18 +86,18 @@ resources:
 targets:
   dev:
     mode: development
-    default:
-      run_as:
-        user_email: 71762233042@cit.edu.in
+    run_as:
+      user_name: 71762233042@cit.edu.in
     variables:
-      pipeline_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
-      test_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
+      pipeline_notebook_path: src/Amazon_Production_Pipeline.py
+      test_notebook_path: tests/Amazon_Pipeline_Unit_Tests.py
+      job_pause_status: PAUSED
   
   prod:
     mode: production
-    default:
-      run_as:
-        user_email: 71762233042@cit.edu.in
+    run_as:
+      user_name: 71762233042@cit.edu.in
     variables:
-      pipeline_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Production_Pipeline
-      test_notebook_path: /Users/71762233042@cit.edu.in/Amazon_Pipeline_Unit_Tests
+      pipeline_notebook_path: src/Amazon_Production_Pipeline.py
+      test_notebook_path: tests/Amazon_Pipeline_Unit_Tests.py
+      job_pause_status: UNPAUSED

@@ -61,7 +61,7 @@ jobs:
   # --------------------------------------------------------------------------
   run-unit-tests:
     name: Run Unit Tests
-n    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs: validate-bundle
     steps:
       - name: Checkout code
@@ -102,7 +102,7 @@ n    runs-on: ubuntu-latest
           echo "✅ All unit tests passed!"
       
       - name: Upload test results
-n        if: always()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
@@ -113,7 +113,7 @@ n        if: always()
   # --------------------------------------------------------------------------
   deploy-dev:
     name: Deploy to Dev
-n    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs: run-unit-tests
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
@@ -125,7 +125,7 @@ n    runs-on: ubuntu-latest
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       
       - name: Deploy bundle to dev
-n        run: |
+        run: |
           databricks bundle deploy -t dev
       
       - name: Notify deployment
@@ -137,7 +137,7 @@ n        run: |
   # --------------------------------------------------------------------------
   deploy-prod:
     name: Deploy to Production
-n    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs: run-unit-tests
     if: github.event_name == 'release'
     steps:
