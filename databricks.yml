@@ -35,7 +35,7 @@ variables:
 # ----------------------------------------------------------------------------
 resources:
   jobs:
-    amazon_etl_pipeline:
+    amazon_etl_pipeline_v2:
       name: "Amazon ETL Pipeline - ${bundle.target}"
       description: "Runs the Amazon medallion architecture ETL pipeline (Bronze → Silver → Gold)"
       schedule:
@@ -46,35 +46,20 @@ resources:
         - task_key: run_etl_pipeline
           notebook_task:
             notebook_path: ${var.pipeline_notebook_path}
-          job_cluster_key: pipeline_cluster
-      job_clusters:
-        - job_cluster_key: pipeline_cluster
-          new_cluster:
-            spark_version: latest
-            node_type_id: i3.xlarge
-            num_workers: 1
-            data_security_mode: SINGLE_USER
-            runtime_engine: PHOTON
+            source: WORKSPACE
       tags:
         project: amazon-pipeline
         environment: ${bundle.target}
         owner: data-engineering
     
-    amazon_pipeline_tests:
+    amazon_pipeline_tests_v2:
       name: "Amazon Pipeline Unit Tests - ${bundle.target}"
       description: "Runs unit tests for transformation logic, validation rules, and data quality"
       tasks:
         - task_key: run_unit_tests
           notebook_task:
             notebook_path: ${var.test_notebook_path}
-          job_cluster_key: test_cluster
-      job_clusters:
-        - job_cluster_key: test_cluster
-          new_cluster:
-            spark_version: latest
-            node_type_id: i3.xlarge
-            num_workers: 1
-            data_security_mode: SINGLE_USER
+            source: WORKSPACE
       tags:
         project: amazon-pipeline
         type: test
