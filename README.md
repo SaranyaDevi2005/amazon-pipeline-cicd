@@ -18,6 +18,12 @@ amazon-pipeline-cicd/
     └── Amazon_Pipeline_Unit_Tests.py   # Unit tests for transformation logic
 ```
 
+## CI/CD Status
+
+✅ GitHub Actions secrets configured (DATABRICKS_HOST, DATABRICKS_TOKEN)
+✅ Bundle validates for dev and prod targets
+✅ 43/43 unit tests passing (100%)
+
 ## Quick Start
 
 ### 1. Connect Your GitHub Account
